@@ -47,7 +47,7 @@ export const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose }) => 
 
   const handleSelect = (slug: string) => {
     onClose();
-    navigateTo(`/blog/${slug}`);
+    navigateTo(`/${slug}`);
   };
 
   return (
@@ -107,10 +107,14 @@ export const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose }) => 
             </div>
           ) : (
             results.map((art) => (
-              <button
+              <a
                 key={art.id}
-                onClick={() => handleSelect(art.slug)}
-                className="w-full text-left p-3.5 bg-[#F4F1EA] hover:bg-[#EBE6DF] rounded-xl transition-colors group flex items-center justify-between gap-4 cursor-pointer"
+                href={`/${art.slug}`}
+                onClick={(e) => {
+                  e.preventDefault();
+                  handleSelect(art.slug);
+                }}
+                className="w-full text-left p-3.5 bg-[#F4F1EA] hover:bg-[#EBE6DF] rounded-xl transition-colors group flex items-center justify-between gap-4 cursor-pointer block"
               >
                 <div className="space-y-1">
                   <div className="text-xs text-[#78716C] flex items-center gap-2 font-mono">
@@ -126,7 +130,7 @@ export const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose }) => 
                   </p>
                 </div>
                 <ArrowRight className="w-4 h-4 text-[#78716C] group-hover:text-[#1C1917] shrink-0 group-hover:translate-x-1 transition-transform" />
-              </button>
+              </a>
             ))
           )}
         </div>

@@ -98,44 +98,64 @@ export const Footer: React.FC = () => {
             </h5>
             <ul className="space-y-2 text-xs text-[#A8A29E]">
               <li>
-                <button
-                  onClick={() => navigateTo('/category/Trends')}
-                  className="hover:text-[#FAF9F5] transition-colors text-left"
+                <a
+                  href="/category/Trends"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    navigateTo('/category/Trends');
+                  }}
+                  className="hover:text-[#FAF9F5] transition-colors text-left block"
                 >
                   2026 Runway & Trend Forecasts
-                </button>
+                </a>
               </li>
               <li>
-                <button
-                  onClick={() => navigateTo('/category/Wardrobe Essentials')}
-                  className="hover:text-[#FAF9F5] transition-colors text-left"
+                <a
+                  href="/category/Wardrobe Essentials"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    navigateTo('/category/Wardrobe Essentials');
+                  }}
+                  className="hover:text-[#FAF9F5] transition-colors text-left block"
                 >
                   Capsule Wardrobe on a Budget
-                </button>
+                </a>
               </li>
               <li>
-                <button
-                  onClick={() => navigateTo('/category/Outfit Guides')}
-                  className="hover:text-[#FAF9F5] transition-colors text-left"
+                <a
+                  href="/category/Outfit Guides"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    navigateTo('/category/Outfit Guides');
+                  }}
+                  className="hover:text-[#FAF9F5] transition-colors text-left block"
                 >
                   Comfort & Everyday Dressing
-                </button>
+                </a>
               </li>
               <li>
-                <button
-                  onClick={() => navigateTo('/category/Fabrics & Care')}
-                  className="hover:text-[#FAF9F5] transition-colors text-left"
+                <a
+                  href="/category/Fabrics & Care"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    navigateTo('/category/Fabrics & Care');
+                  }}
+                  className="hover:text-[#FAF9F5] transition-colors text-left block"
                 >
                   Breathable Textiles & Garment Care
-                </button>
+                </a>
               </li>
               <li>
-                <button
-                  onClick={() => navigateTo('/category/Sustainability')}
-                  className="hover:text-[#FAF9F5] transition-colors text-left"
+                <a
+                  href="/category/Sustainability"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    navigateTo('/category/Sustainability');
+                  }}
+                  className="hover:text-[#FAF9F5] transition-colors text-left block"
                 >
                   Fast Fashion vs. Sustainable
-                </button>
+                </a>
               </li>
             </ul>
           </div>
@@ -147,15 +167,19 @@ export const Footer: React.FC = () => {
             </h5>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-2 text-xs text-[#A8A29E]">
               {BLOG_ARTICLES.map((art, idx) => (
-                <button
+                <a
                   key={art.id}
-                  onClick={() => navigateTo(`/blog/${art.slug}`)}
-                  className="text-left hover:text-[#FAF9F5] transition-colors truncate"
+                  href={`/${art.slug}`}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    navigateTo(`/${art.slug}`);
+                  }}
+                  className="text-left hover:text-[#FAF9F5] transition-colors truncate block"
                   title={art.title}
                 >
                   <span className="font-mono text-[#78716C] mr-1.5">{String(idx + 1).padStart(2, '0')}.</span>
-                  {art.title.split(':')[0]}
-                </button>
+                  {art.title.split('|')[0].trim()}
+                </a>
               ))}
             </div>
           </div>

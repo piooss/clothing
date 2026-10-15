@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { 
   ArrowLeft, Bookmark, Share2, Check, Copy, ChevronDown, ChevronUp, 
   ArrowRight, Clock, Calendar, User, Eye, Sparkles, ShoppingBag, 
-  ThumbsUp, ThumbsDown, HelpCircle, Link as LinkIcon
+  ThumbsUp, ThumbsDown, HelpCircle, Link as LinkIcon, Download, Camera
 } from 'lucide-react';
 import { BlogPost, ProductRecommendation } from '../types/blog';
 import { BLOG_ARTICLES } from '../data/blogArticles';
@@ -13,6 +13,36 @@ import { ProductModal } from './ProductModal';
 
 interface ArticleDetailProps {
   article: BlogPost;
+}
+
+function highlightKeywords(text: string, keywords: string[]): React.ReactNode {
+  if (!keywords || keywords.length === 0) return text;
+
+  const valid = keywords
+    .filter((k) => k && k.trim().length > 0)
+    .sort((a, b) => b.length - a.length);
+
+  if (valid.length === 0) return text;
+
+  const escaped = valid.map((k) => k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
+  const regex = new RegExp(`(${escaped.join('|')})`, 'gi');
+  const parts = text.split(regex);
+
+  return parts.map((part, index) => {
+    const isKeyword = valid.some((k) => k.toLowerCase() === part.toLowerCase());
+    if (isKeyword) {
+      return (
+        <mark
+          key={index}
+          className="bg-[#FAF0E6] text-[#9A3412] font-semibold px-1.5 py-0.5 rounded border border-[#E8D5C4] inline shadow-xs transition-colors hover:bg-[#F3E5D8]"
+          title={`Focus Keyword: ${part}`}
+        >
+          {part}
+        </mark>
+      );
+    }
+    return part;
+  });
 }
 
 export const ArticleDetail: React.FC<ArticleDetailProps> = ({ article }) => {
@@ -59,7 +89,7 @@ export const ArticleDetail: React.FC<ArticleDetailProps> = ({ article }) => {
   }, [article]);
 
   const handleShare = (platform: 'twitter' | 'linkedin' | 'facebook' | 'pinterest' | 'copy') => {
-    const url = window.location.href;
+    const url = `${window.location.origin}/${article.slug}`;
     const title = article.title;
 
     switch (platform) {
@@ -127,21 +157,41 @@ export const ArticleDetail: React.FC<ArticleDetailProps> = ({ article }) => {
       {/* Top Breadcrumb & Return Ribbon */}
       <div className="border-b border-[#E5DFD5] bg-[#FAF9F5]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex items-center justify-between">
-          <button
-            onClick={() => navigateTo('/')}
+          <a
+            href="/"
+            onClick={(e) => {
+              e.preventDefault();
+              navigateTo('/');
+            }}
             className="flex items-center gap-2 text-xs font-medium text-[#57534E] hover:text-[#1C1917] transition-colors cursor-pointer"
           >
             <ArrowLeft className="w-3.5 h-3.5" />
-            <span>Back to Journal</span>
-          </button>
+            <span>Return to All Style Guides</span>
+          </a>
 
           {/* Breadcrumb path */}
           <div className="hidden sm:flex items-center gap-2 text-xs text-[#78716C]">
-            <button onClick={() => navigateTo('/')} className="hover:underline">Home</button>
+            <a
+              href="/"
+              onClick={(e) => {
+                e.preventDefault();
+                navigateTo('/');
+              }}
+              className="hover:underline hover:text-[#1C1917]"
+            >
+              L'Atelier Home
+            </a>
             <span>/</span>
-            <button onClick={() => navigateTo(`/category/${article.category}`)} className="hover:underline">
-              {article.category}
-            </button>
+            <a
+              href={`/category/${article.category}`}
+              onClick={(e) => {
+                e.preventDefault();
+                navigateTo(`/category/${article.category}`);
+              }}
+              className="hover:underline hover:text-[#1C1917]"
+            >
+              {article.category} Department
+            </a>
             <span>/</span>
             <span className="text-[#1C1917] truncate max-w-xs">{article.title.split(':')[0]}</span>
           </div>
@@ -162,12 +212,16 @@ export const ArticleDetail: React.FC<ArticleDetailProps> = ({ article }) => {
         
         {/* Zero-Pill Unboxed Metadata */}
         <div className="flex flex-wrap items-center gap-2.5 text-xs text-[#57534E]">
-          <button
-            onClick={() => navigateTo(`/category/${article.category}`)}
+          <a
+            href={`/category/${article.category}`}
+            onClick={(e) => {
+              e.preventDefault();
+              navigateTo(`/category/${article.category}`);
+            }}
             className="font-semibold tracking-wider uppercase text-[#9A3412] hover:underline"
           >
-            {article.category}
-          </button>
+            {article.category} Guides
+          </a>
           <span aria-hidden="true">·</span>
           <span className="flex items-center gap-1">
             <Calendar className="w-3.5 h-3.5 text-[#78716C]" />
@@ -244,23 +298,77 @@ export const ArticleDetail: React.FC<ArticleDetailProps> = ({ article }) => {
           </div>
         </div>
 
+        {/* Core Topic Keywords Index (1 Main, 2 Related Keywords) */}
+        {(article.primaryKeyword || (article.relatedKeywords && article.relatedKeywords.length > 0)) && (
+          <div className="p-4 bg-[#F4F1EA] border border-[#E5DFD5] rounded-xl space-y-2.5 text-xs">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <span className="font-mono text-[#78716C] uppercase tracking-wider font-semibold flex items-center gap-1.5">
+                <Sparkles className="w-3.5 h-3.5 text-[#9A3412]" />
+                Focus Keywords (Highlighted in opening paragraph below):
+              </span>
+              <span className="text-[11px] text-[#78716C] italic">1 Main &amp; 2 Related</span>
+            </div>
+            <div className="flex flex-wrap items-center gap-2">
+              {article.primaryKeyword && (
+                <span className="inline-flex items-center gap-1.5 bg-[#FAF9F5] border border-[#E8D5C4] text-[#9A3412] px-3 py-1.5 rounded-md font-semibold shadow-xs">
+                  <span className="w-2 h-2 rounded-full bg-[#9A3412]"></span>
+                  <span className="text-[#78716C] font-normal uppercase text-[10px] tracking-wider">Main:</span>
+                  {article.primaryKeyword}
+                </span>
+              )}
+              {article.relatedKeywords?.map((kw, i) => (
+                <span key={i} className="inline-flex items-center gap-1.5 bg-[#FAF9F5] border border-[#E5DFD5] text-[#292524] px-3 py-1.5 rounded-md font-medium">
+                  <span className="text-[#78716C] font-normal uppercase text-[10px] tracking-wider">Related {i + 1}:</span>
+                  {kw}
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
+
       </header>
 
-      {/* Featured Marquee Image */}
+      {/* Featured Marquee Image with Artist Attribution & Direct Clean Download */}
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pb-10">
-        <div className="relative aspect-16/9 rounded-2xl overflow-hidden bg-[#F4F1EA] border border-[#E5DFD5] shadow-sm">
+        <div className="relative aspect-16/9 rounded-2xl overflow-hidden bg-[#F4F1EA] border border-[#E5DFD5] shadow-sm group">
           <img
             src={article.featuredImage}
             alt={article.imageAlt}
             referrerPolicy="no-referrer"
             className="w-full h-full object-cover"
           />
+
+          {/* Artist Watermark Overlay Badge (baked into image + displayed in UI) */}
+          <div className="absolute top-4 left-4 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#1C1917]/85 backdrop-blur-md text-[#FAF9F5] text-xs font-medium shadow-sm pointer-events-none">
+            <Camera className="w-3.5 h-3.5 text-[#E5DFD5]" />
+            <span>Artist: <strong className="text-white">{article.author.name}</strong></span>
+          </div>
+
+          {/* Clean File Save Button (under 100kb with proper filename) */}
+          <a
+            href={article.featuredImage}
+            download={article.featuredImage.split('/').pop()}
+            title={`Download ${article.featuredImage.split('/').pop()} (<100KB)`}
+            className="absolute top-4 right-4 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#FAF9F5]/90 hover:bg-[#FAF9F5] text-[#1C1917] text-xs font-medium border border-[#E5DFD5] shadow-sm transition-all cursor-pointer"
+          >
+            <Download className="w-3.5 h-3.5 text-[#9A3412]" />
+            <span className="hidden sm:inline">Save Image</span>
+            <span className="text-[10px] text-[#78716C] font-mono">&lt;100KB</span>
+          </a>
         </div>
-        {article.imageCaption && (
-          <p className="text-xs font-serif italic text-[#78716C] mt-2.5 text-center">
-            {article.imageCaption}
+
+        <div className="flex flex-wrap items-center justify-between text-xs text-[#78716C] mt-2.5 px-1 gap-2">
+          <p className="font-serif italic text-center sm:text-left">
+            {article.imageCaption || `Curated editorial portrait by artist ${article.author.name}`}
           </p>
-        )}
+          <div className="flex items-center gap-2 font-mono text-[11px] text-[#57534E]">
+            <span className="text-[#9A3412] font-semibold">{article.featuredImage.split('/').pop()}</span>
+            <span>·</span>
+            <span>Artist: {article.author.name}</span>
+            <span>·</span>
+            <span className="bg-[#E7E5E4] px-1.5 py-0.5 rounded text-[#292524]">&lt;100KB Optimized</span>
+          </div>
+        </div>
       </div>
 
       {/* Main Reading Grid: Sticky TOC Sidebar + Longform Article Body */}
@@ -359,11 +467,11 @@ export const ArticleDetail: React.FC<ArticleDetailProps> = ({ article }) => {
                 {section.paragraphs.map((para, pIndex) => (
                   <p
                     key={pIndex}
-                    className={`text-base sm:text-lg text-[#292524] leading-relaxed font-sans ${
-                      sIndex === 0 && pIndex === 0 ? 'drop-cap' : ''
-                    }`}
+                    className="text-base sm:text-lg text-[#292524] leading-relaxed font-sans"
                   >
-                    {para}
+                    {sIndex === 0 && pIndex === 0
+                      ? highlightKeywords(para, [article.primaryKeyword, ...(article.relatedKeywords || [])])
+                      : para}
                   </p>
                 ))}
 
@@ -380,6 +488,35 @@ export const ArticleDetail: React.FC<ArticleDetailProps> = ({ article }) => {
                 )}
               </section>
             ))}
+
+            {/* Contextual Internal Reading Links with descriptive anchor text */}
+            {relatedArticles.length > 0 && (
+              <div className="p-6 bg-[#F4F1EA] border-l-4 border-[#9A3412] rounded-r-xl space-y-3">
+                <div className="text-xs font-mono uppercase tracking-widest text-[#78716C]">
+                  Connected Sartorial Reading
+                </div>
+                <p className="text-xs text-[#57534E]">
+                  Continue exploring related topics and deepen your garment expertise:
+                </p>
+                <ul className="space-y-2.5">
+                  {relatedArticles.map((rel) => (
+                    <li key={rel.id}>
+                      <a
+                        href={`/${rel.slug}`}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          navigateTo(`/${rel.slug}`);
+                        }}
+                        className="text-sm font-medium text-[#1C1917] hover:text-[#9A3412] hover:underline flex items-center gap-2 group"
+                      >
+                        <ArrowRight className="w-3.5 h-3.5 text-[#9A3412] group-hover:translate-x-1 transition-transform shrink-0" />
+                        <span>See full guide: {rel.title.split('|')[0].trim()}</span>
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
 
             {/* In-Depth Pros and Cons Module */}
             <section id="pros-cons" className="space-y-6 pt-4 scroll-mt-24">
@@ -566,9 +703,13 @@ export const ArticleDetail: React.FC<ArticleDetailProps> = ({ article }) => {
             {/* Prev / Next Article Pagination */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-6 border-t border-[#E5DFD5]">
               {prevArticle ? (
-                <button
-                  onClick={() => navigateTo(`/blog/${prevArticle.slug}`)}
-                  className="p-4 bg-[#FAF9F5] border border-[#E5DFD5] rounded-xl hover:border-[#1C1917] text-left space-y-1 transition-all group cursor-pointer"
+                <a
+                  href={`/${prevArticle.slug}`}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    navigateTo(`/${prevArticle.slug}`);
+                  }}
+                  className="p-4 bg-[#FAF9F5] border border-[#E5DFD5] rounded-xl hover:border-[#1C1917] text-left space-y-1 transition-all group cursor-pointer block"
                 >
                   <span className="text-xs text-[#78716C] flex items-center gap-1 font-mono uppercase">
                     <ArrowLeft className="w-3 h-3 group-hover:-translate-x-1 transition-transform" />
@@ -577,13 +718,17 @@ export const ArticleDetail: React.FC<ArticleDetailProps> = ({ article }) => {
                   <p className="font-serif text-sm font-semibold text-[#1C1917] group-hover:text-[#9A3412] transition-colors line-clamp-1">
                     {prevArticle.title}
                   </p>
-                </button>
+                </a>
               ) : <div />}
 
               {nextArticle ? (
-                <button
-                  onClick={() => navigateTo(`/blog/${nextArticle.slug}`)}
-                  className="p-4 bg-[#FAF9F5] border border-[#E5DFD5] rounded-xl hover:border-[#1C1917] text-right space-y-1 transition-all group cursor-pointer"
+                <a
+                  href={`/${nextArticle.slug}`}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    navigateTo(`/${nextArticle.slug}`);
+                  }}
+                  className="p-4 bg-[#FAF9F5] border border-[#E5DFD5] rounded-xl hover:border-[#1C1917] text-right space-y-1 transition-all group cursor-pointer block"
                 >
                   <span className="text-xs text-[#78716C] flex items-center justify-end gap-1 font-mono uppercase">
                     Next Guide
@@ -592,7 +737,7 @@ export const ArticleDetail: React.FC<ArticleDetailProps> = ({ article }) => {
                   <p className="font-serif text-sm font-semibold text-[#1C1917] group-hover:text-[#9A3412] transition-colors line-clamp-1">
                     {nextArticle.title}
                   </p>
-                </button>
+                </a>
               ) : <div />}
             </div>
 
@@ -613,21 +758,29 @@ export const ArticleDetail: React.FC<ArticleDetailProps> = ({ article }) => {
                 Related Sartorial Guides
               </h2>
             </div>
-            <button
-              onClick={() => navigateTo('/')}
+            <a
+              href="/"
+              onClick={(e) => {
+                e.preventDefault();
+                navigateTo('/');
+              }}
               className="text-xs font-semibold text-[#1C1917] hover:underline inline-flex items-center gap-1 self-start cursor-pointer"
             >
-              <span>View All 10 Guides</span>
+              <span>Explore All 10 Sartorial Guides</span>
               <ArrowRight className="w-3.5 h-3.5" />
-            </button>
+            </a>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {relatedArticles.map((rel) => (
-              <div
+              <a
                 key={rel.id}
-                onClick={() => navigateTo(`/blog/${rel.slug}`)}
-                className="group cursor-pointer bg-[#FAF9F5] border border-[#E5DFD5] rounded-xl overflow-hidden hover:border-[#1C1917] transition-all flex flex-col justify-between"
+                href={`/${rel.slug}`}
+                onClick={(e) => {
+                  e.preventDefault();
+                  navigateTo(`/${rel.slug}`);
+                }}
+                className="group cursor-pointer bg-[#FAF9F5] border border-[#E5DFD5] rounded-xl overflow-hidden hover:border-[#1C1917] transition-all flex flex-col justify-between block"
               >
                 <div>
                   <div className="aspect-16/10 overflow-hidden bg-[#EBE6DF]">
@@ -654,7 +807,7 @@ export const ArticleDetail: React.FC<ArticleDetailProps> = ({ article }) => {
                   <span>{rel.publishedDate}</span>
                   <span className="font-medium text-[#1C1917] group-hover:underline">Read →</span>
                 </div>
-              </div>
+              </a>
             ))}
           </div>
         </div>

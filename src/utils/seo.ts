@@ -2,11 +2,11 @@ import { BlogPost } from '../types/blog';
 
 export function updateMetaTags(article?: BlogPost) {
   const defaultTitle = "L'ATELIER SARTORIAL – The Modern Clothing & Style Journal";
-  const defaultDesc = "An elegant, editorial clothing and fashion publication featuring comprehensive style guides, capsule wardrobe blueprints, fabric care, outfit inspirations, and sustainable fashion insights.";
+  const defaultDesc = "Discover expert clothing style guides, capsule wardrobe essentials, and fabric care tips to elevate everyday outfits. Read practical fashion advice today.";
 
   const title = article ? article.metaTitle : defaultTitle;
   const desc = article ? article.metaDescription : defaultDesc;
-  const url = window.location.href;
+  const url = article ? `${window.location.origin}/${article.slug}` : window.location.origin;
   const image = article ? (window.location.origin + article.featuredImage) : '';
 
   // Update document title

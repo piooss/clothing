@@ -51,6 +51,7 @@ export interface FAQItem {
 export interface BlogPost {
   id: string;
   slug: string;
+  aliases?: string[];
   title: string;
   subtitle: string;
   category: 'Trends' | 'Wardrobe Essentials' | 'Outfit Guides' | 'Fabrics & Care' | 'Styling Advice' | 'Dress Codes' | 'Accessories' | 'Smart Shopping' | 'Sustainability';
@@ -63,6 +64,8 @@ export interface BlogPost {
   excerpt: string;
   metaTitle: string;
   metaDescription: string;
+  primaryKeyword: string;
+  relatedKeywords: string[];
   keywords: string[];
   toc: TocItem[];
   sections: ContentSection[];

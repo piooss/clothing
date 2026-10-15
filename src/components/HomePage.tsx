@@ -195,28 +195,40 @@ export const HomePage: React.FC<HomePageProps> = ({ initialCategory = 'All', ini
               </div>
               <ul className="space-y-2 text-xs">
                 <li>
-                  <button
-                    onClick={() => navigateTo('/blog/how-to-build-wardrobe-on-budget')}
+                  <a
+                    href="/how-to-build-perfect-wardrobe-budget"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      navigateTo('/how-to-build-perfect-wardrobe-budget');
+                    }}
                     className="font-medium text-[#1C1917] hover:text-[#9A3412] text-left block"
                   >
                     → The 70/30 Capsule Wardrobe Blueprint
-                  </button>
+                  </a>
                 </li>
                 <li>
-                  <button
-                    onClick={() => navigateTo('/blog/best-fabrics-to-wear-in-summer')}
+                  <a
+                    href="/best-summer-clothing-fabrics-linen-cotton"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      navigateTo('/best-summer-clothing-fabrics-linen-cotton');
+                    }}
                     className="font-medium text-[#1C1917] hover:text-[#9A3412] text-left block"
                   >
                     → Summer Textile Breathability Chart
-                  </button>
+                  </a>
                 </li>
                 <li>
-                  <button
-                    onClick={() => navigateTo('/blog/how-to-choose-clothing-size-online')}
+                  <a
+                    href="/how-to-choose-clothing-size-online-shopping"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      navigateTo('/how-to-choose-clothing-size-online-shopping');
+                    }}
                     className="font-medium text-[#1C1917] hover:text-[#9A3412] text-left block"
                   >
                     → How to Measure Flat Garments Accurately
-                  </button>
+                  </a>
                 </li>
               </ul>
             </div>

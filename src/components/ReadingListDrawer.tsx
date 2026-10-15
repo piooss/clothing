@@ -18,7 +18,7 @@ export const ReadingListDrawer: React.FC<ReadingListDrawerProps> = ({ isOpen, on
 
   const handleSelectArticle = (slug: string) => {
     onClose();
-    navigateTo(`/blog/${slug}`);
+    navigateTo(`/${slug}`);
   };
 
   return (
@@ -77,11 +77,17 @@ export const ReadingListDrawer: React.FC<ReadingListDrawerProps> = ({ isOpen, on
                       <span>{art.readTime}</span>
                     </div>
 
-                    <h4 
-                      onClick={() => handleSelectArticle(art.slug)}
-                      className="font-serif text-base font-semibold text-[#1C1917] hover:text-[#9A3412] cursor-pointer line-clamp-2 transition-colors"
-                    >
-                      {art.title}
+                    <h4 className="font-serif text-base font-semibold text-[#1C1917] hover:text-[#9A3412] line-clamp-2 transition-colors">
+                      <a
+                        href={`/${art.slug}`}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          handleSelectArticle(art.slug);
+                        }}
+                        className="hover:underline"
+                      >
+                        {art.title}
+                      </a>
                     </h4>
 
                     <p className="text-xs text-[#57534E] line-clamp-2">
@@ -90,13 +96,17 @@ export const ReadingListDrawer: React.FC<ReadingListDrawerProps> = ({ isOpen, on
                   </div>
 
                   <div className="pt-2 border-t border-[#E5DFD5] flex items-center justify-between text-xs">
-                    <button
-                      onClick={() => handleSelectArticle(art.slug)}
+                    <a
+                      href={`/${art.slug}`}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        handleSelectArticle(art.slug);
+                      }}
                       className="font-medium text-[#1C1917] inline-flex items-center gap-1 hover:underline cursor-pointer"
                     >
                       <span>Read Guide</span>
                       <ArrowRight className="w-3.5 h-3.5" />
-                    </button>
+                    </a>
 
                     <button
                       onClick={() => toggle(art.slug)}

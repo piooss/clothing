@@ -9,7 +9,7 @@ export function parseCurrentRoute(): RouteState {
   const hash = window.location.hash;
   const path = window.location.pathname;
 
-  // Check hash-based routing first (common in preview iframes) or standard pathname
+  // Clean path without hashes or redundant slashes
   let effectivePath = path;
   if (hash.startsWith('#/')) {
     effectivePath = hash.slice(1);
@@ -17,24 +17,33 @@ export function parseCurrentRoute(): RouteState {
     effectivePath = hash.slice(1);
   }
 
-  // Check /blog/:slug
-  const blogMatch = effectivePath.match(/^\/?blog\/([a-zA-Z0-9_-]+)/);
-  if (blogMatch && blogMatch[1]) {
-    return { view: 'article', slug: blogMatch[1] };
+  // Strip leading and trailing slashes
+  const clean = effectivePath.replace(/^\/+|\/+$/g, '');
+
+  // Root homepage
+  if (!clean) {
+    const urlParams = new URLSearchParams(window.location.search);
+    return { 
+      view: 'home', 
+      searchParam: urlParams.get('q') || undefined, 
+      categoryParam: urlParams.get('cat') || undefined 
+    };
   }
 
-  // Check /category/:cat
-  const catMatch = effectivePath.match(/^\/?category\/([a-zA-Z0-9_-]+)/);
+  // Category view: /category/:cat
+  const catMatch = clean.match(/^category\/(.+)$/i);
   if (catMatch && catMatch[1]) {
     return { view: 'category', category: decodeURIComponent(catMatch[1]) };
   }
 
-  // Check query params if any
-  const urlParams = new URLSearchParams(window.location.search);
-  const q = urlParams.get('q') || undefined;
-  const cat = urlParams.get('cat') || undefined;
+  // /blog/:slug view (supported for legacy/external links)
+  const blogMatch = clean.match(/^blog\/(.+)$/i);
+  if (blogMatch && blogMatch[1]) {
+    return { view: 'article', slug: blogMatch[1] };
+  }
 
-  return { view: 'home', searchParam: q, categoryParam: cat };
+  // Clean top-level direct slug (e.g., /fashion-trends-2026-style-guide)
+  return { view: 'article', slug: clean };
 }
 
 export function navigateTo(path: string, options?: { replace?: boolean }) {

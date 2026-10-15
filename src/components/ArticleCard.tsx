@@ -18,7 +18,7 @@ export const ArticleCard: React.FC<ArticleCardProps> = ({ article, featured = fa
     if ((e.target as HTMLElement).closest('.bookmark-btn')) {
       return;
     }
-    navigateTo(`/blog/${article.slug}`);
+    navigateTo(`/${article.slug}`);
   };
 
   const handleBookmarkToggle = (e: React.MouseEvent) => {
@@ -56,6 +56,11 @@ export const ArticleCard: React.FC<ArticleCardProps> = ({ article, featured = fa
             >
               <Bookmark className={`w-4 h-4 ${saved ? 'fill-[#9A3412] text-[#9A3412]' : 'text-[#1C1917]'}`} />
             </button>
+
+            {/* Artist Attribution Label */}
+            <div className="absolute bottom-3 left-3 px-2.5 py-1 rounded-md bg-[#1C1917]/80 backdrop-blur-md text-[11px] text-[#FAF9F5] font-mono pointer-events-none">
+              Artist: {article.author.name}
+            </div>
           </div>
 
           {/* Featured Content Area */}
@@ -75,7 +80,16 @@ export const ArticleCard: React.FC<ArticleCardProps> = ({ article, featured = fa
 
               {/* Title & Subtitle */}
               <h2 className="font-serif text-2xl sm:text-3xl lg:text-4xl font-semibold text-[#1C1917] leading-tight group-hover:text-[#9A3412] transition-colors">
-                {article.title}
+                <a
+                  href={`/${article.slug}`}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    navigateTo(`/${article.slug}`);
+                  }}
+                  className="hover:underline focus:outline-none"
+                >
+                  {article.title}
+                </a>
               </h2>
 
               <p className="text-sm text-[#57534E] leading-relaxed line-clamp-3">
@@ -99,7 +113,7 @@ export const ArticleCard: React.FC<ArticleCardProps> = ({ article, featured = fa
               </div>
 
               <span className="inline-flex items-center gap-1 text-xs font-semibold text-[#1C1917] group-hover:translate-x-1 transition-transform">
-                Read Full Guide
+                Read Full {article.category} Guide
                 <ArrowUpRight className="w-3.5 h-3.5" />
               </span>
             </div>
@@ -139,6 +153,11 @@ export const ArticleCard: React.FC<ArticleCardProps> = ({ article, featured = fa
           >
             <Bookmark className={`w-3.5 h-3.5 ${saved ? 'fill-[#9A3412] text-[#9A3412]' : 'text-[#1C1917]'}`} />
           </button>
+
+          {/* Artist Attribution Label */}
+          <div className="absolute bottom-2.5 left-2.5 px-2 py-0.5 rounded bg-[#1C1917]/80 backdrop-blur-md text-[10px] text-[#FAF9F5] font-mono pointer-events-none">
+            Artist: {article.author.name}
+          </div>
         </div>
 
         {/* Content Details */}
@@ -154,7 +173,16 @@ export const ArticleCard: React.FC<ArticleCardProps> = ({ article, featured = fa
           </div>
 
           <h3 className="font-serif text-xl font-semibold text-[#1C1917] leading-snug group-hover:text-[#9A3412] transition-colors line-clamp-2">
-            {article.title}
+            <a
+              href={`/${article.slug}`}
+              onClick={(e) => {
+                e.preventDefault();
+                navigateTo(`/${article.slug}`);
+              }}
+              className="hover:underline focus:outline-none"
+            >
+              {article.title}
+            </a>
           </h3>
 
           <p className="text-xs text-[#57534E] leading-relaxed line-clamp-2">
@@ -167,7 +195,7 @@ export const ArticleCard: React.FC<ArticleCardProps> = ({ article, featured = fa
       <div className="px-5 sm:px-6 pb-5 pt-3 border-t border-[#E5DFD5] flex items-center justify-between text-xs text-[#78716C]">
         <span>{article.publishedDate}</span>
         <span className="inline-flex items-center gap-1 font-medium text-[#1C1917] group-hover:translate-x-0.5 transition-transform">
-          Read Guide
+          Read {article.category} Guide
           <ArrowUpRight className="w-3.5 h-3.5" />
         </span>
       </div>

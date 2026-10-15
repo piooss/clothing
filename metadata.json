@@ -1,6 +1,6 @@
 {
   "name": "L'ATELIER SARTORIAL – The Modern Clothing & Style Journal",
-  "description": "An elegant, editorial clothing and fashion publication featuring comprehensive style guides, capsule wardrobe blueprints, fabric care, outfit inspirations, and sustainable fashion insights.",
+  "description": "Discover expert clothing style guides, capsule wardrobe essentials, and fabric care tips to elevate everyday outfits. Read practical fashion advice today.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

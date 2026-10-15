@@ -19,7 +19,16 @@ export default function App() {
   let is404 = false;
 
   if (route.view === 'article') {
-    currentArticle = BLOG_ARTICLES.find((a) => a.slug === route.slug);
+    const cleanSlug = route.slug.toLowerCase().trim().replace(/^\/+|\/+$/g, '');
+    currentArticle = BLOG_ARTICLES.find(
+      (a) => a.slug.toLowerCase() === cleanSlug || a.aliases?.some((alias) => alias.toLowerCase() === cleanSlug)
+    );
+    if (!currentArticle) {
+      // Fallback matching for partial clean keyword slugs
+      currentArticle = BLOG_ARTICLES.find(
+        (a) => a.slug.toLowerCase().includes(cleanSlug) || cleanSlug.includes(a.slug.toLowerCase())
+      );
+    }
     if (!currentArticle) {
       is404 = true;
     }
